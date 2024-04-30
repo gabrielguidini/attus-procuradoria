@@ -1,17 +1,14 @@
 package com.attus.procuradoria.controller;
 
 import com.attus.procuradoria.controller.documentation.ClientDocumentation;
-import com.attus.procuradoria.dto.AddressDTO;
 import com.attus.procuradoria.dto.ClientDTO;
-import com.attus.procuradoria.entity.Address;
 import com.attus.procuradoria.entity.enums.ClientAddressEnum;
 import com.attus.procuradoria.exceptions.ViaCepException;
 import com.attus.procuradoria.forms.ClientForm;
 import com.attus.procuradoria.service.AddressService;
 import com.attus.procuradoria.service.ClientService;
-import com.attus.procuradoria.utils.ClientUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,26 +21,25 @@ public class ClientController implements ClientDocumentation {
 
     private final ClientService clientService;
     private final AddressService addressService;
+    private final ObjectMapper objectMapper;
 
-    @PostMapping
+    @PostMapping("/createClient")
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
-    public ClientDTO createClient(@RequestBody @NotNull ClientForm clientForm,
+    public ClientDTO createClient(@RequestBody ClientForm client,
                                   @RequestParam ClientAddressEnum clientAddressEnum,
                                   @RequestParam String zipCode,
                                   @RequestParam String houseNumber) {
         try {
-            log.info("");
-            return clientService.creatingClient(ClientUtils.convertClientFormToClientDTO(clientForm),
-                    clientAddressEnum,
-                    addressService.zipCodeFounder(zipCode, houseNumber));
+            log.info("ClientController.createClient() -> init process , client {}", objectMapper.writeValueAsString(client));
+            return clientService.creatingClient(client, clientAddressEnum, addressService.zipCodeFounder(zipCode, houseNumber));
 
         } catch (ViaCepException e) {
-            log.error("");
+            log.error("problema no viacep");
             throw new ViaCepException(e.getMessage());
 
         } catch (Exception e) {
-            log.error("");
+            log.error("generic exception");
             throw new RuntimeException(e);
         }
     }

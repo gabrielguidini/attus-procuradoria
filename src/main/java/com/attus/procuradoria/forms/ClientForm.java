@@ -1,14 +1,14 @@
 package com.attus.procuradoria.forms;
 
-import lombok.Builder;
-import lombok.Data;
-
-import java.util.UUID;
+import lombok.*;
 
 @Builder
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class ClientForm {
-    private UUID clientUuid;
+
     private String name;
     private String surname;
 }

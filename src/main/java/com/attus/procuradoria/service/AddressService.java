@@ -1,16 +1,15 @@
 package com.attus.procuradoria.service;
 
-import com.attus.procuradoria.dto.AddressDTO;
 import com.attus.procuradoria.dto.ViaCepDTO;
 import com.attus.procuradoria.entity.Address;
 import com.attus.procuradoria.exceptions.ViaCepException;
 import com.attus.procuradoria.repository.AddressRepository;
 import com.attus.procuradoria.utils.AddressUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -26,10 +25,11 @@ import java.io.IOException;
 public class AddressService {
 
     private final AddressRepository addressRepository;
+    private final ObjectMapper objectMapper;
 
-    public AddressDTO zipCodeFounder(String commingZipCode, String houseNumber) {
+    public Address zipCodeFounder(String commingZipCode, String houseNumber) {
 
-        log.info("");
+        log.info("AddressService.zipCodeFounder() -> init process, zipCode {}, houseNumber {}", commingZipCode, houseNumber);
 
         ViaCepDTO viaCep = null;
 
@@ -54,9 +54,9 @@ public class AddressService {
 
             this.addressRepository.save(updatedAddress);
 
-            log.info("");
+            log.info("AddressService.zipCodeFounder() -> finish process, address {}", objectMapper.writeValueAsString(updatedAddress));
 
-            return AddressUtils.convertAddressToAddressDTO(updatedAddress);
+            return updatedAddress;
 
         } catch (ViaCepException e) {
             log.error("AddressService.zipCodeFounder() -> error while trying to retrieve zip code info, zipCode {} ,error {}", commingZipCode, e.getMessage());
