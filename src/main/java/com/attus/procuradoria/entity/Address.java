@@ -1,5 +1,7 @@
 package com.attus.procuradoria.entity;
 
+import com.attus.procuradoria.entity.enums.ClientAddressEnum;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,11 +12,14 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Address {
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private Integer addressId;
     private String streetName;
     private String zipCode;
     private String houseNumber;
     private String city;
     private String uf;
+
+    private ClientAddressEnum clientAddressEnum;
 }

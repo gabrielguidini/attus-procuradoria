@@ -1,5 +1,6 @@
 package com.attus.procuradoria.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,11 +14,13 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Client {
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private Integer id;
-    private UUID clientUuid;
+    @Builder.Default
+    private UUID clientUuid = UUID.randomUUID();
     private String name;
     private String surname;
     @OneToMany
-    private List<Address> clientAdress;
+    private List<Address> clientAddress;
 }
