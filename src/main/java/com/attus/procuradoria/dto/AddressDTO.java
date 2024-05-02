@@ -1,9 +1,7 @@
 package com.attus.procuradoria.dto;
 
 import com.attus.procuradoria.entity.enums.ClientAddressEnum;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Builder
 @Getter

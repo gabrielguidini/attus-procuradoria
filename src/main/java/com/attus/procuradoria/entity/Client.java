@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,6 +22,7 @@ public class Client {
     private UUID clientUuid = UUID.randomUUID();
     private String name;
     private String surname;
+    private OffsetDateTime birthDate;
     @OneToMany
     private List<Address> clientAddress;
 }
