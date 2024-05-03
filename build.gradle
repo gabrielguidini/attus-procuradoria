@@ -39,6 +39,8 @@ dependencies {
 	implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.14'
 	//gson
 	implementation group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
+	//jackson
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 }
 
 tasks.named('test') {

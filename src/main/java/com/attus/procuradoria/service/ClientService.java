@@ -1,5 +1,6 @@
 package com.attus.procuradoria.service;
 
+import com.attus.procuradoria.dto.AddressDTO;
 import com.attus.procuradoria.dto.ClientDTO;
 import com.attus.procuradoria.entity.Address;
 import com.attus.procuradoria.entity.Client;
@@ -33,9 +34,7 @@ public class ClientService {
 
         Client client = ClientUtils.convertClientFormToClient(clientForm);
 
-        UUID clientUuid = UUID.randomUUID();
-
-        client.setClientUuid(clientUuid);
+        client.setBirthDate(clientForm.getBirthDate());
 
         address.setClientAddressEnum(clientAddressEnum);
 
@@ -45,17 +44,17 @@ public class ClientService {
             client.getClientAddress().add(address);
         }
 
-        clientRepository.save(client);
+        this.clientRepository.save(client);
 
         log.info("ClientService.creatingClient() -> finish process, client {}", this.objectMapper.writeValueAsString(client) );
 
         return ClientUtils.convertClientToClientDTO(client);
     }
 
-    public ClientDTO deleteClient(UUID clientUuid) throws JsonProcessingException {
-        log.info("ClientService.deleteClient() -> init process, clientUuid {}", clientUuid);
+    public ClientDTO deleteClient(UUID clientId) throws JsonProcessingException {
+        log.info("ClientService.deleteClient() -> init process, clientUuid {}", clientId);
 
-        Client client = clientRepository.findByClientUuid(clientUuid)
+        Client client = clientRepository.findById(clientId)
                 .orElseThrow(() -> new ClientNotFoundException(CLIENT_NOT_FOUND_MESSAGE));
 
         clientRepository.delete(client);
@@ -63,22 +62,6 @@ public class ClientService {
         log.info("ClientService.deleteClient() -> finish process, client {} deleted", this.objectMapper.writeValueAsString(client));
 
         return ClientUtils.convertClientToClientDTO(client);
-    }
-
-    public ClientDTO updateClient(Client updatedClient) throws JsonProcessingException {
-        log.info("ClientService.updateClient() -> init process, client {}", this.objectMapper.writeValueAsString(updatedClient));
-        Client existingClient = clientRepository.findByClientUuid(updatedClient.getClientUuid())
-                .orElseThrow(()-> new ClientNotFoundException(CLIENT_NOT_FOUND_MESSAGE));
-
-            Map<String, Object> updatedClientMap = objectMapper.convertValue(updatedClient, Map.class);
-
-            updatedClientMap.values().removeIf(Objects::isNull);
-
-            objectMapper.readerForUpdating(existingClient).readValue(objectMapper.writeValueAsString(updatedClientMap));
-
-            clientRepository.save(existingClient);
-
-            return ClientUtils.convertClientToClientDTO(existingClient);
     }
 
     public List<ClientDTO> findAllClients() {
@@ -96,15 +79,30 @@ public class ClientService {
         return clientDTOList;
     }
 
-    public ClientDTO findClient(UUID clientUuid) {
-        log.info("ClientService.findClient() -> init process, clientUuid {}", clientUuid);
+    public ClientDTO findClient(UUID clientId) {
+        log.info("ClientService.findClient() -> init process, clientUuid {}", clientId);
 
-        Client client = clientRepository.findByClientUuid(clientUuid)
+        Client client = clientRepository.findById(clientId)
                 .orElseThrow(() -> new ClientNotFoundException(CLIENT_NOT_FOUND_MESSAGE));
 
-        log.info("ClientService.findClient() -> init process, clientUuid {}", clientUuid);
+        log.info("ClientService.findClient() -> init process, clientUuid {}", clientId);
 
         return ClientUtils.convertClientToClientDTO(client);
 
+    }
+
+    public List<AddressDTO> addAddressIntoAClient(UUID clientId, Address address,ClientAddressEnum clientAddressEnum) {
+
+        ClientDTO clientDTO = this.findClient(clientId);
+
+        Client client = ClientUtils.convertClientDTOToClient(clientDTO);
+
+        address.setClientAddressEnum(clientAddressEnum);
+
+        client.getClientAddress().add(address);
+
+        this.clientRepository.save(client);
+
+        return clientDTO.getClientAddress();
     }
 }

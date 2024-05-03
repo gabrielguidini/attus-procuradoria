@@ -1,5 +1,6 @@
 package com.attus.procuradoria.controller.documentation;
 
+import com.attus.procuradoria.dto.AddressDTO;
 import com.attus.procuradoria.dto.ClientDTO;
 import com.attus.procuradoria.entity.Client;
 import com.attus.procuradoria.entity.enums.ClientAddressEnum;
@@ -38,7 +39,7 @@ public interface ClientDocumentation {
             @ApiResponse(responseCode = "404", description = "Not Found"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
-    ClientDTO getClientById(UUID clientUuid);
+    ClientDTO getClientById(UUID clientId);
 
     @Operation(summary = "Create a client")
     @ApiResponses(value = {
@@ -69,10 +70,10 @@ public interface ClientDocumentation {
     })
     ClientDTO deleteClient(UUID clientId);
 
-    @Operation(summary = "Delete a client")
+    @Operation(summary = "Adding a Address into Client")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
-                    description = "Delete a client",
+                    description = "Adding a Address into Client",
                     content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
@@ -80,5 +81,8 @@ public interface ClientDocumentation {
             @ApiResponse(responseCode = "404", description = "Not Found"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
-    ClientDTO updateClient(Client client) throws JsonProcessingException;
+    List<AddressDTO> addAddressIntoClient(UUID clientUuid,
+                                          String zipCode,
+                                          String houseNumber,
+                                          ClientAddressEnum clientAddressEnum);
 }

@@ -3,7 +3,6 @@ package com.attus.procuradoria.controller;
 import com.attus.procuradoria.controller.documentation.ClientDocumentation;
 import com.attus.procuradoria.dto.AddressDTO;
 import com.attus.procuradoria.dto.ClientDTO;
-import com.attus.procuradoria.entity.Client;
 import com.attus.procuradoria.entity.enums.ClientAddressEnum;
 import com.attus.procuradoria.exceptions.ClientNotFoundException;
 import com.attus.procuradoria.exceptions.ViaCepException;
@@ -13,14 +12,12 @@ import com.attus.procuradoria.service.ClientService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -81,36 +78,34 @@ public class ClientController implements ClientDocumentation {
         }
     }
 
-    @DeleteMapping("/{clientUuid}")
+    @DeleteMapping("/{clientId}")
     @ResponseStatus(HttpStatus.OK)
     @Transactional
-    public ClientDTO deleteClient(@PathVariable UUID clientUuid) {
+    public ClientDTO deleteClient(@PathVariable UUID clientId) {
 
         try {
-            log.info("ClientController.deleteClient() -> init process , clientUuid {}", clientUuid);
+            log.info("ClientController.deleteClient() -> init process , clientUuid {}", clientId);
 
-            ClientDTO clientDTO = clientService.deleteClient(clientUuid);
+            ClientDTO clientDTO = clientService.deleteClient(clientId);
 
             log.info("ClientController.deleteClient() -> finish process , client {}", this.objectMapper.writeValueAsString(clientDTO));
 
             return clientDTO;
         } catch (ClientNotFoundException | JsonProcessingException e) {
-            log.info("ClientController.deleteClient() -> client not found, client {}", clientUuid, e.getCause());
+            log.info("ClientController.deleteClient() -> client not found, client {}", clientId, e.getCause());
             throw new ClientNotFoundException(e.getMessage());
         }
     }
 
-    @PutMapping("/{clientUuid}")
+    @PutMapping("/addAddressIntoClient/{clientId}")
     @ResponseStatus(HttpStatus.OK)
     @Transactional
-    public ClientDTO updateClient(@RequestBody Client client) throws JsonProcessingException {
-        log.info("ClientController.updateClient() -> init process , clientUuid {}", this.objectMapper.writeValueAsString(client));
-        try {
-            return clientService.updateClient(client);
-        } catch (ClientNotFoundException e) {
-            log.error("ClientController.updateClient() ->  client {} {}",this.objectMapper.writeValueAsString(client) ,e.getMessage());
-            throw new ClientNotFoundException(e.getMessage(), e.getCause());
-        }
+    public List<AddressDTO> addAddressIntoClient(@PathVariable UUID clientId,
+                                                 @RequestParam String zipCode,
+                                                 @RequestParam String houseNumber,
+                                                 @RequestParam ClientAddressEnum clientAddressEnum) {
+
+        return clientService.addAddressIntoAClient(clientId,addressService.zipCodeFounder(zipCode, houseNumber), clientAddressEnum);
     }
 
 }

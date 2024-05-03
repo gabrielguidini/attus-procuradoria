@@ -13,7 +13,7 @@ public class ClientUtils {
     public ClientDTO convertClientToClientDTO(Client client) {
 
         return ClientDTO.builder()
-                .clientUuid(client.getClientUuid())
+                .clientId(client.getClientId())
                 .name(client.getName())
                 .surname(client.getSurname())
                 .clientAddress(client.getClientAddress()
@@ -23,11 +23,25 @@ public class ClientUtils {
                 .build();
     }
 
+    public Client convertClientDTOToClient(ClientDTO clientDTO) {
+
+        return Client.builder()
+                .clientId(clientDTO.getClientId())
+                .name(clientDTO.getName())
+                .surname(clientDTO.getSurname())
+                .clientAddress(clientDTO.getClientAddress()
+                        .stream()
+                        .map(AddressUtils::convertAddressDTOToAddress)
+                        .collect(Collectors.toList()))
+                .build();
+    }
+
     public Client convertClientFormToClient(ClientForm clientForm) {
 
         return Client.builder()
                 .name(clientForm.getName())
                 .surname(clientForm.getSurname())
+                .birthDate(clientForm.getBirthDate())
                 .build();
     }
 

@@ -1,10 +1,10 @@
 package com.attus.procuradoria.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.OffsetDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,14 +15,14 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Client {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
-    private Integer id;
+    @Id
     @Builder.Default
-    private UUID clientUuid = UUID.randomUUID();
+    private UUID clientId = UUID.randomUUID();
     private String name;
     private String surname;
-    private OffsetDateTime birthDate;
-    @OneToMany
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Date birthDate;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_id")
     private List<Address> clientAddress;
 }

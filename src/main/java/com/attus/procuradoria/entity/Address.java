@@ -1,9 +1,10 @@
 package com.attus.procuradoria.entity;
 
 import com.attus.procuradoria.entity.enums.ClientAddressEnum;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.UUID;
 
 @Entity
 @Builder
@@ -12,14 +13,16 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Address {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
-    private Integer addressId;
+    @Id
+    @Builder.Default
+    private UUID addressId = UUID.randomUUID();
     private String streetName;
     private String zipCode;
     private String houseNumber;
     private String city;
     private String uf;
-
+    @Enumerated(EnumType.STRING)
     private ClientAddressEnum clientAddressEnum;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Client client;
 }
