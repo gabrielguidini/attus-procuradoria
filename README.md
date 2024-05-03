@@ -4,19 +4,22 @@
 - [@gabrielguidini](https://github.com/gabrielguidini)
 
 ### - Description / Descrição:
-- This project consists in a application which needs to be able to manage client and their address
+- This is a job test that consists in creating an application that manages client and their addresses entirely
+- The main goals with this api is to:
+  - Make a simple CRUD one or more clients;
+  - Make a simples CRUD to get one or more addresses from a client;
+  - Indicate which address is the main one.
 
 ```mermaid
 classDiagram
     class Client{
-        - id : Integer
+        - clientId : UUID
         - birthDate : Date
-        - clientUuid : UUID
         - name : String
         - surname : String
     }
     class Address{
-        - addressId : Integer
+        - addressId : UUID
         - city : String
         - clientAddressEnum : ClientAddressEnum
         - houseNumber : String

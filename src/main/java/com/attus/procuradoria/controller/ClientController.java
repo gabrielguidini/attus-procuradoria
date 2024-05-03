@@ -7,7 +7,6 @@ import com.attus.procuradoria.entity.enums.ClientAddressEnum;
 import com.attus.procuradoria.exceptions.ClientNotFoundException;
 import com.attus.procuradoria.exceptions.ViaCepException;
 import com.attus.procuradoria.forms.ClientForm;
-import com.attus.procuradoria.service.AddressService;
 import com.attus.procuradoria.service.ClientService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,7 +26,6 @@ import java.util.UUID;
 public class ClientController implements ClientDocumentation {
 
     private final ClientService clientService;
-    private final AddressService addressService;
     private final ObjectMapper objectMapper;
 
     @GetMapping("/getAllClients")
@@ -66,7 +64,7 @@ public class ClientController implements ClientDocumentation {
                                   @RequestParam String houseNumber) throws JsonProcessingException {
         try {
             log.info("ClientController.createClient() -> init process , client {}", objectMapper.writeValueAsString(client));
-            return clientService.creatingClient(client, clientAddressEnum, addressService.zipCodeFounder(zipCode, houseNumber));
+            return clientService.creatingClient(client, clientAddressEnum, zipCode, houseNumber);
 
         } catch (ViaCepException e) {
             log.error("ClientController.createClient() -> Error while trying to retrieve via-cep info {}", e.getMessage());
@@ -103,9 +101,9 @@ public class ClientController implements ClientDocumentation {
     public List<AddressDTO> addAddressIntoClient(@PathVariable UUID clientId,
                                                  @RequestParam String zipCode,
                                                  @RequestParam String houseNumber,
-                                                 @RequestParam ClientAddressEnum clientAddressEnum) {
+                                                 @RequestParam ClientAddressEnum clientAddressEnum) throws JsonProcessingException {
 
-        return clientService.addAddressIntoAClient(clientId,addressService.zipCodeFounder(zipCode, houseNumber), clientAddressEnum);
+        return clientService.addAddressIntoAClient(clientId, zipCode, houseNumber, clientAddressEnum);
     }
 
 }

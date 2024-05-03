@@ -84,5 +84,5 @@ public interface ClientDocumentation {
     List<AddressDTO> addAddressIntoClient(UUID clientUuid,
                                           String zipCode,
                                           String houseNumber,
-                                          ClientAddressEnum clientAddressEnum);
+                                          ClientAddressEnum clientAddressEnum) throws JsonProcessingException;
 }
