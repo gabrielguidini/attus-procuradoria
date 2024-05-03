@@ -22,6 +22,7 @@ public class AddressUtils {
     public AddressDTO convertAddressToAddressDTO(Address address){
 
         return AddressDTO.builder()
+                .addressId(address.getAddressId())
                 .zipCode(address.getZipCode())
                 .streetName(address.getStreetName())
                 .houseNumber(address.getHouseNumber())
@@ -34,6 +35,7 @@ public class AddressUtils {
     public Address convertAddressDTOToAddress(AddressDTO addressDTO){
 
         return Address.builder()
+                .addressId(addressDTO.getAddressId())
                 .zipCode(addressDTO.getZipCode())
                 .streetName(addressDTO.getStreetName())
                 .houseNumber(addressDTO.getHouseNumber())

@@ -2,7 +2,7 @@ package com.attus.procuradoria.controller;
 
 import com.attus.procuradoria.controller.documentation.AddressDocumentation;
 import com.attus.procuradoria.dto.AddressDTO;
-import com.attus.procuradoria.service.implementation.AddressServiceImp;
+import com.attus.procuradoria.service.AddressService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,13 +17,13 @@ import java.util.UUID;
 @Slf4j
 public class AddressController implements AddressDocumentation {
 
-    private final AddressServiceImp addressServiceImp;
+    private final AddressService addressService;
 
     @GetMapping("/getAllAddress")
     @ResponseStatus(HttpStatus.OK)
     public List<AddressDTO> getAllAddress() {
 
-        return addressServiceImp.findAllAddresses();
+        return addressService.findAllAddresses();
     }
 
     @PutMapping("/{addressUuid}")
@@ -32,7 +32,7 @@ public class AddressController implements AddressDocumentation {
                                           @RequestParam String newZipCode,
                                           @RequestParam String newHouseNumber) throws JsonProcessingException {
 
-        return addressServiceImp.updateAddress(addressUuid, newZipCode, newHouseNumber);
+        return addressService.updateAddress(addressUuid, newZipCode, newHouseNumber);
     }
 
 }
