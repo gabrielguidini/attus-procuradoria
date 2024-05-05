@@ -69,7 +69,7 @@ public class ClientController implements ClientDocumentation {
             return clientService.creatingClient(client, clientAddressEnum, zipCode, houseNumber);
 
         } catch (AddressNotFoundException e) {
-            log.error("ClientController.createClient() -> Error while trying to retrieve via-cep info {}", e.getMessage());
+            log.error("ClientController.createClient() -> Error while trying to retrieve via-cep info, zipCode {} error {}", zipCode ,e.getMessage());
             throw new AddressNotFoundException("Address not found");
         }
     }
