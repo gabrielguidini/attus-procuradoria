@@ -25,7 +25,7 @@ public interface AddressDocumentation {
             @ApiResponse(responseCode = "404", description = "Not Found"),
             @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
-    List<AddressDTO> getAllAddress();
+    List<AddressDTO> getAllAddress() throws JsonProcessingException;
 
     @Operation(summary = "Update an Address")
     @ApiResponses(value = {

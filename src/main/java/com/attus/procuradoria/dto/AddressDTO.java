@@ -11,8 +11,8 @@ import java.util.UUID;
 @Setter
 public class AddressDTO {
     private UUID addressId;
-    private String zipCode;
     private String streetName;
+    private String zipCode;
     private String houseNumber;
     private String city;
     private String uf;

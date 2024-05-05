@@ -4,6 +4,7 @@ import com.attus.procuradoria.controller.documentation.ClientDocumentation;
 import com.attus.procuradoria.dto.AddressDTO;
 import com.attus.procuradoria.dto.ClientDTO;
 import com.attus.procuradoria.entity.enums.ClientAddressEnum;
+import com.attus.procuradoria.exceptions.AddressNotFoundException;
 import com.attus.procuradoria.exceptions.ClientNotFoundException;
 import com.attus.procuradoria.exceptions.ViaCepException;
 import com.attus.procuradoria.forms.ClientForm;
@@ -27,6 +28,7 @@ public class ClientController implements ClientDocumentation {
 
     private final ClientService clientService;
     private final ObjectMapper objectMapper;
+    private final String CLIENT_NOT_FOUND_MESSAGE = "Client not found";
 
     @GetMapping("/getAllClients")
     @ResponseStatus(HttpStatus.OK)
@@ -37,7 +39,7 @@ public class ClientController implements ClientDocumentation {
             return clientService.findAllClients();
         } catch (ClientNotFoundException e){
             log.error("ClientController.getClientAllClients() -> error {}", e.getMessage());
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            throw new ClientNotFoundException(CLIENT_NOT_FOUND_MESSAGE);
         }
 
     }
@@ -50,8 +52,8 @@ public class ClientController implements ClientDocumentation {
 
             return clientService.findClient(clientId);
         } catch (ClientNotFoundException e) {
-            log.error("ClientController.getClientById(() -> error {}", clientId);
-            throw new ClientNotFoundException(e.getMessage(), e.getCause());
+            log.error("ClientController.getClientById(() -> clientId {} error {}", clientId, e.getMessage());
+            throw new ClientNotFoundException(CLIENT_NOT_FOUND_MESSAGE);
         }
     }
 
@@ -66,13 +68,9 @@ public class ClientController implements ClientDocumentation {
             log.info("ClientController.createClient() -> init process , client {}", objectMapper.writeValueAsString(client));
             return clientService.creatingClient(client, clientAddressEnum, zipCode, houseNumber);
 
-        } catch (ViaCepException e) {
+        } catch (AddressNotFoundException e) {
             log.error("ClientController.createClient() -> Error while trying to retrieve via-cep info {}", e.getMessage());
-            throw new ViaCepException(e.getMessage());
-
-        } catch (Exception e) {
-            log.error("ClientController.createClient() -> Generic exception, clientForm {} ,error {}", this.objectMapper.writeValueAsString(client),e.getMessage());
-            throw new RuntimeException(e);
+            throw new AddressNotFoundException("Address not found");
         }
     }
 
@@ -90,8 +88,8 @@ public class ClientController implements ClientDocumentation {
 
             return clientDTO;
         } catch (ClientNotFoundException | JsonProcessingException e) {
-            log.info("ClientController.deleteClient() -> client not found, client {}", clientId, e.getCause());
-            throw new ClientNotFoundException(e.getMessage());
+            log.info("ClientController.deleteClient() -> client not found, clientId {} error {}", clientId, e.getMessage());
+            throw new ClientNotFoundException(CLIENT_NOT_FOUND_MESSAGE);
         }
     }
 
@@ -102,8 +100,12 @@ public class ClientController implements ClientDocumentation {
                                                  @RequestParam String zipCode,
                                                  @RequestParam String houseNumber,
                                                  @RequestParam ClientAddressEnum clientAddressEnum) throws JsonProcessingException {
-
-        return clientService.addAddressIntoAClient(clientId, zipCode, houseNumber, clientAddressEnum);
+        try {
+            return clientService.addAddressIntoAClient(clientId, zipCode, houseNumber, clientAddressEnum);
+        }catch (AddressNotFoundException e){
+            log.error("ClientController.addAddressIntoClient() -> error {}", e.getMessage(), e.getCause());
+            throw new AddressNotFoundException(e.getMessage());
+        }
     }
 
 }

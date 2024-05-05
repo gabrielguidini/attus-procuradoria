@@ -17,6 +17,7 @@ public class ClientArrange {
                 .clientId(UUID.fromString("d9ba5e2f-60be-4fa4-a641-0a7c4ee3cdd8"))
                 .name("Test")
                 .surname("Test")
+                .birthDate(Date.valueOf("1999-09-08"))
                 .clientAddress(List.of(AddressArrange.getOneValidAddress()))
                 .build();
 

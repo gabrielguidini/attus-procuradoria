@@ -11,8 +11,8 @@ public class AddressUtils {
     public Address convertViaCepDTOtoAddress(ViaCepDTO viaCepDTO){
 
         return Address.builder()
-                .zipCode(viaCepDTO.getCep())
                 .streetName(viaCepDTO.getLogradouro())
+                .zipCode(viaCepDTO.getCep())
                 .houseNumber(viaCepDTO.getComplemento())
                 .city(viaCepDTO.getLocalidade())
                 .uf(viaCepDTO.getUf())
@@ -23,8 +23,8 @@ public class AddressUtils {
 
         return AddressDTO.builder()
                 .addressId(address.getAddressId())
-                .zipCode(address.getZipCode())
                 .streetName(address.getStreetName())
+                .zipCode(address.getZipCode())
                 .houseNumber(address.getHouseNumber())
                 .city(address.getCity())
                 .clientAddressEnum(address.getClientAddressEnum())
@@ -36,8 +36,8 @@ public class AddressUtils {
 
         return Address.builder()
                 .addressId(addressDTO.getAddressId())
-                .zipCode(addressDTO.getZipCode())
                 .streetName(addressDTO.getStreetName())
+                .zipCode(addressDTO.getZipCode())
                 .houseNumber(addressDTO.getHouseNumber())
                 .city(addressDTO.getCity())
                 .clientAddressEnum(addressDTO.getClientAddressEnum())

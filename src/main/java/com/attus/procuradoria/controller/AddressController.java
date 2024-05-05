@@ -2,6 +2,7 @@ package com.attus.procuradoria.controller;
 
 import com.attus.procuradoria.controller.documentation.AddressDocumentation;
 import com.attus.procuradoria.dto.AddressDTO;
+import com.attus.procuradoria.exceptions.AddressNotFoundException;
 import com.attus.procuradoria.service.AddressService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +19,19 @@ import java.util.UUID;
 public class AddressController implements AddressDocumentation {
 
     private final AddressService addressService;
+    private final String ADDRESS_NOT_FOUND_MESSAGE = "Address not found";
 
     @GetMapping("/getAllAddress")
     @ResponseStatus(HttpStatus.OK)
-    public List<AddressDTO> getAllAddress() {
+    public List<AddressDTO> getAllAddress() throws JsonProcessingException {
+        log.info("AddressController.getAllAddress() -> init process");
 
-        return addressService.findAllAddresses();
+        try {
+            return addressService.findAllAddresses();
+        } catch (AddressNotFoundException e) {
+            log.error("AddressController.getAllAddress() -> error {}", e.getMessage());
+            throw new AddressNotFoundException(ADDRESS_NOT_FOUND_MESSAGE);
+        }
     }
 
     @PutMapping("/{addressUuid}")

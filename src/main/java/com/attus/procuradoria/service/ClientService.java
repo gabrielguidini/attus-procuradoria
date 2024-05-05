@@ -96,6 +96,7 @@ public class ClientService {
     }
 
     public List<AddressDTO> addAddressIntoAClient(UUID clientId, String zipCode, String houseNumber,ClientAddressEnum clientAddressEnum) throws JsonProcessingException {
+        log.info("ClientService.addAddressIntoAClient() -> init process, clientUuid {}, newZipCode {}, newHouseNumber{} ", clientId, zipCode, houseNumber);
 
         ClientDTO clientDTO = this.findClient(clientId);
 
@@ -107,7 +108,13 @@ public class ClientService {
 
         client.getClientAddress().add(address);
 
+        if(!client.getClientAddress().contains(address)){
+            throw new ClientNotFoundException("Error trying to add address into a client");
+        }
+
         this.clientRepository.save(client);
+
+        log.info("ClientService.addAddressIntoAClient() -> finish process, updatedClient {}", this.objectMapper.writeValueAsString(client));
 
         return clientDTO.getClientAddress();
     }

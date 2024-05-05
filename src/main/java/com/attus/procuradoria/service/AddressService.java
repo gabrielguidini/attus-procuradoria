@@ -59,20 +59,23 @@ public class AddressService {
                 viaCep = gson.fromJson(result, ViaCepDTO.class);
             }
             if (viaCep == null) {
-                log.error("AddressService.zipCodeFounder() -> Zip code not found, zipCode {}", comingZipCode);
-                throw new ViaCepException("Zip Code Info is Empty");
+                throw new ViaCepException("Address not found in ViaCep API");
             }
             viaCep.setComplemento(houseNumber);
 
             Address updatedAddress = AddressUtils.convertViaCepDTOtoAddress(viaCep);
 
+            if(updatedAddress.getZipCode() == null) {
+                throw new AddressNotFoundException(ADDRESS_NOT_FOUND_MESSAGE);
+            }
+
             log.info("AddressService.zipCodeFounder() -> finish process, address {}", objectMapper.writeValueAsString(updatedAddress));
 
             return updatedAddress;
 
-        } catch (ViaCepException e) {
+        } catch (AddressNotFoundException e) {
             log.error("AddressService.zipCodeFounder() -> error while trying to retrieve zip code info, zipCode {} ,error {}", comingZipCode, e.getMessage());
-            throw new ViaCepException(e.getMessage());
+            throw new AddressNotFoundException(ADDRESS_NOT_FOUND_MESSAGE);
         } catch (IOException e) {
             log.error("AddressService.zipCodeFounder() -> error IOException {}", e.getMessage());
             throw new RuntimeException(e);
@@ -85,12 +88,19 @@ public class AddressService {
         this.addressRepository.save(address);
     }
 
-    public List<AddressDTO> findAllAddresses() {
+    public List<AddressDTO> findAllAddresses() throws JsonProcessingException {
+        log.info("AddressService.findAllAddresses() -> init process");
 
-        return addressRepository.findAll().stream().map(AddressUtils::convertAddressToAddressDTO).toList();
+        List<AddressDTO> addressDTOList = addressRepository.findAll().stream().map(AddressUtils::convertAddressToAddressDTO).toList();
+
+        log.info("AddressService.findAllAddresses() -> finish process, addressList {}", objectMapper.writeValueAsString(addressDTOList));
+
+        return addressDTOList;
     }
 
     public AddressDTO updateAddress(UUID addressUuid, String newZipCode, String newHouseNumber) throws JsonProcessingException {
+
+        log.info("AddressService.updateAddress() -> init process, addressUuid {}, newZipCode {}, newHouseNumber {}", addressUuid, newZipCode, newHouseNumber);
 
         Address address = addressRepository.findById(addressUuid).orElseThrow(() -> new AddressNotFoundException(ADDRESS_NOT_FOUND_MESSAGE));
 
@@ -103,6 +113,8 @@ public class AddressService {
         address.setCity(updatedAddress.getCity());
 
         this.save(address);
+
+        log.info("AddressService.updateAddress() -> finish process, addressUuid {}, updatedAddress {}", addressUuid, this.objectMapper.writeValueAsString(address));
 
         return addressRepository.findById(addressUuid).map(AddressUtils::convertAddressToAddressDTO).orElse(null);
     }
