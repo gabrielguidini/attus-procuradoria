@@ -5,7 +5,7 @@ import com.attus.procuradoria.entity.Client;
 import com.attus.procuradoria.forms.ClientForm;
 import com.attus.procuradoria.repository.ClientRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,9 +24,9 @@ public class ClientServiceTest {
     @Mock
     private AddressService addressService;
 
-    @Before
-    public void setUp() {
-        clientService = new ClientService(clientRepository, addressService, objectMapper);
+    @BeforeEach
+    public void setup() {
+        clientService = new ClientService(clientRepository,addressService, objectMapper);
     }
 
     @Test
