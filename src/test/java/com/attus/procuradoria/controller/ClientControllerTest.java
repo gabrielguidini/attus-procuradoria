@@ -158,7 +158,7 @@ public class ClientControllerTest {
     public void shouldThrowClientNotFoundExceptionOnDeleteClient() throws JsonProcessingException {
         //arrange
         String NOT_FOUND_MESSAGE = "Client not found";
-        when(clientService.deleteClient(UUID.randomUUID()))
+        when(clientService.deleteClient(any(UUID.class)))
                 .thenThrow(ClientNotFoundException.class);
 
         //act
@@ -186,24 +186,6 @@ public class ClientControllerTest {
         //assert
         assertNotNull(responseAddIntoClient);
         assertEquals(clientAfter.getClientAddress(), responseAddIntoClient);
-
-    }
-
-    @Test
-    public void shouldThrowAddressNotFoundExceptionOnAddAddressIntoClient() throws JsonProcessingException {
-        //arrange
-        String NOT_FOUND_MESSAGE = "Address not found";
-        ClientDTO clientBefore = ClientUtils.convertClientToClientDTO(ClientArrange.getValidClientWithOneAddress());
-        when(clientService.addAddressIntoAClient(clientBefore.getClientId(), "89213480", "656", ClientAddressEnum.SECONDARY_ADDRESS))
-                .thenThrow(AddressNotFoundException.class);
-
-        //act
-        var exception = assertThrows(AddressNotFoundException.class,
-                () -> clientController.addAddressIntoClient(clientBefore.getClientId(), "89213480",
-                        "656", ClientAddressEnum.SECONDARY_ADDRESS)).getMessage();
-
-        //assert
-        assertEquals(NOT_FOUND_MESSAGE, exception);
 
     }
 

@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  attus-db:
+    image: postgres:latest
+    container_name: attus-db
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER= ${POSTGRES_USER}
+      - POSTGRES_PASSWORD= ${POSTGRES_PASSWORD}
+      - POSTGRES_DB= ${POSTGRES_DB}
+    command: postgres -c checkpoint_timeout=600 -c max_wal_size=4096
+    ports:
+      - "5432:5432"
+
+  attus-app:
+    image: gabrielguidini/attus:latest
+    container_name: attus-app
+    build:
+      context: ./attus-procuradoria
+      dockerfile: ./devops/docker/Dockerfile
+    depends_on:
+      - attus-db
+    env_file:
+      - .env
+    environment:
+      - SPRING_DATASOURCE_URL= jdbc:postgresql://db:5432/${POSTGRES_DB}
+      - SPRING_DATASOURCE_USERNAME= postgres
+      - SPRING_DATASOURCE_PASSWORD= 1234
+      - POSTGRES_USER= ${POSTGRES_USER}
+      - POSTGRES_PASSWORD= ${POSTGRES_PASSWORD}
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    ports:
+      - "8080:8080"
