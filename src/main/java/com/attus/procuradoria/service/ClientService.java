@@ -5,9 +5,11 @@ import com.attus.procuradoria.dto.ClientDTO;
 import com.attus.procuradoria.entity.Address;
 import com.attus.procuradoria.entity.Client;
 import com.attus.procuradoria.entity.enums.ClientAddressEnum;
+import com.attus.procuradoria.exceptions.AddressGenericError;
 import com.attus.procuradoria.exceptions.ClientNotFoundException;
 import com.attus.procuradoria.forms.ClientForm;
 import com.attus.procuradoria.repository.ClientRepository;
+import com.attus.procuradoria.utils.AddressUtils;
 import com.attus.procuradoria.utils.ClientUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,11 +44,7 @@ public class ClientService {
 
         address.setClientAddressEnum(clientAddressEnum);
 
-        if(Optional.ofNullable(client.getClientAddress()).isEmpty()) {
-            client.setClientAddress(List.of(address));
-        } else {
-            client.getClientAddress().add(address);
-        }
+        client.setClientAddress(List.of(address));
 
         this.clientRepository.save(client);
 
@@ -95,7 +93,10 @@ public class ClientService {
 
     }
 
-    public List<AddressDTO> addAddressIntoAClient(UUID clientId, String zipCode, String houseNumber,ClientAddressEnum clientAddressEnum) throws JsonProcessingException {
+    public List<AddressDTO> addAddressIntoAClient(UUID clientId,
+                                                  String zipCode,
+                                                  String houseNumber,
+                                                  ClientAddressEnum clientAddressEnum) throws JsonProcessingException {
         log.info("ClientService.addAddressIntoAClient() -> init process, clientUuid {}, newZipCode {}, newHouseNumber{} ", clientId, zipCode, houseNumber);
 
         ClientDTO clientDTO = this.findClient(clientId);
@@ -108,14 +109,10 @@ public class ClientService {
 
         client.getClientAddress().add(address);
 
-        if(!client.getClientAddress().contains(address)){
-            throw new ClientNotFoundException("Error trying to add address into a client");
-        }
-
         this.clientRepository.save(client);
 
         log.info("ClientService.addAddressIntoAClient() -> finish process, updatedClient {}", this.objectMapper.writeValueAsString(client));
 
-        return clientDTO.getClientAddress();
+        return client.getClientAddress().stream().map(AddressUtils::convertAddressToAddressDTO).toList();
     }
 }

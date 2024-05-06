@@ -7,9 +7,7 @@ import java.util.Date;
 
 @Builder
 @Getter
-@Setter
 @AllArgsConstructor
-@NoArgsConstructor
 public class ClientForm {
 
     private String name;

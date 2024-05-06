@@ -9,6 +9,9 @@
   - Make a simple CRUD one or more clients;
   - Make a simples CRUD to get one or more addresses from a client;
   - Indicate which address is the main one.
+- To enter de swagger UI page:
+  - http://localhost:8080/swagger-ui/index.html#/
+- Mermaid UML
 
 ```mermaid
 classDiagram

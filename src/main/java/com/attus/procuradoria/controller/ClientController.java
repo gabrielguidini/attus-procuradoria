@@ -6,7 +6,6 @@ import com.attus.procuradoria.dto.ClientDTO;
 import com.attus.procuradoria.entity.enums.ClientAddressEnum;
 import com.attus.procuradoria.exceptions.AddressNotFoundException;
 import com.attus.procuradoria.exceptions.ClientNotFoundException;
-import com.attus.procuradoria.exceptions.ViaCepException;
 import com.attus.procuradoria.forms.ClientForm;
 import com.attus.procuradoria.service.ClientService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -16,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
@@ -102,9 +100,9 @@ public class ClientController implements ClientDocumentation {
                                                  @RequestParam ClientAddressEnum clientAddressEnum) throws JsonProcessingException {
         try {
             return clientService.addAddressIntoAClient(clientId, zipCode, houseNumber, clientAddressEnum);
-        }catch (AddressNotFoundException e){
-            log.error("ClientController.addAddressIntoClient() -> error {}", e.getMessage(), e.getCause());
-            throw new AddressNotFoundException(e.getMessage());
+        } catch (ClientNotFoundException e) {
+            log.error("ClientController.addAddressIntoClient() -> error {}", e.getMessage());
+            throw new ClientNotFoundException(CLIENT_NOT_FOUND_MESSAGE);
         }
     }
 
