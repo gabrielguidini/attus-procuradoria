@@ -4,6 +4,7 @@ services:
   attus-db:
     image: postgres:latest
     container_name: attus-db
+    restart: on-failure
     env_file:
       - .env
     environment:
@@ -17,6 +18,7 @@ services:
   attus-app:
     image: gabrielguidini/attus-procuradoria:latest
     container_name: attus-app
+    restart: on-failure
     build:
       context: ./attus-procuradoria
       dockerfile: Dockerfile
